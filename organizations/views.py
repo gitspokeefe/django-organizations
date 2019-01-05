@@ -187,9 +187,7 @@ class OrganizationSignup(FormView):
                 **kwargs)
 
     def get_success_url(self):
-        if hasattr(self, 'success_url'):
-            return self.success_url
-        return reverse('organization_signup_success')
+        return reverse('login')
 
     def form_valid(self, form):
         """
