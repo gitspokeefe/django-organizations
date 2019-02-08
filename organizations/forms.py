@@ -33,6 +33,8 @@ from organizations.models import Organization
 from organizations.models import OrganizationUser
 from organizations.utils import create_organization
 
+from yearend.deadlines.models import OrganizationDeadlines, StaticFilingDeadlines
+
 
 class OrganizationForm(forms.ModelForm):
     """Form class for updating Organizations"""
@@ -146,6 +148,7 @@ class OrganizationAddForm(forms.ModelForm):
         Create the organization, then get the user, then make the owner.
         """
         is_active = True
+
         try:
             user = get_user_model().objects.get(email=self.cleaned_data['email'])
         except get_user_model().DoesNotExist:
@@ -155,8 +158,20 @@ class OrganizationAddForm(forms.ModelForm):
                         'organization': self.cleaned_data['name'],
                         'sender': self.request.user, 'created': True})
             is_active = False
-        return create_organization(user, self.cleaned_data['name'],
-                self.cleaned_data['slug'], is_active=is_active)
+
+        static_filing_deadlines = StaticFilingDeadlines.objects.all()     # modified for deadlines
+        organization = create_organization(user, self.cleaned_data['name'],
+            self.cleaned_data['slug'], is_active=is_active)
+        deadlines = [
+            OrganizationDeadlines(
+                static_filing_deadline=static_deadline,
+                organization=organization,
+            )
+            for static_deadline in static_filing_deadlines
+        ]
+        OrganizationDeadlines.objects.bulk_create(deadlines)
+
+        return organization
 
 
 class SignUpForm(forms.Form):

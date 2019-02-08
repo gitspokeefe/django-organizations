@@ -51,6 +51,8 @@ from organizations.mixins import OwnerRequiredMixin
 from organizations.models import Organization
 from organizations.utils import create_organization
 
+from yearend.deadlines.models import OrganizationDeadlines, StaticFilingDeadlines
+
 
 class BaseOrganizationList(ListView):
     # TODO change this to query on the specified model
@@ -193,8 +195,17 @@ class OrganizationSignup(FormView):
         """
         """
         user = self.backend.register_by_email(form.cleaned_data['email'])
-        create_organization(user=user, name=form.cleaned_data['name'],
+        organization = create_organization(user=user, name=form.cleaned_data['name'],  # modified for deadlines
                 slug=form.cleaned_data['slug'], is_active=False)
+        static_filing_deadlines = StaticFilingDeadlines.objects.all()
+        deadlines = [
+            OrganizationDeadlines(
+                static_filing_deadline=static_deadline,
+                organization=organization,
+            )
+            for static_deadline in static_filing_deadlines
+        ]
+        OrganizationDeadlines.objects.bulk_create(deadlines)
         return redirect(self.get_success_url())
 
 
