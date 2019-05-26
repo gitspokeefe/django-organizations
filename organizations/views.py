@@ -189,7 +189,7 @@ class OrganizationSignup(FormView):
                 **kwargs)
 
     def get_success_url(self):
-        return reverse('login')
+        return reverse('signup_success')    # modified for signup redirect
 
     def form_valid(self, form):
         """
@@ -207,10 +207,6 @@ class OrganizationSignup(FormView):
         ]
         OrganizationDeadlines.objects.bulk_create(deadlines)
         return redirect(self.get_success_url())
-
-
-def signup_success(self, request):
-    return render(request, "organizations/signup_success.html", {})
 
 
 class OrganizationList(BaseOrganizationList):

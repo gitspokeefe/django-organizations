@@ -49,6 +49,8 @@ urlpatterns = [
     url(r'^(?P<organization_pk>[\d]+)/delete/$',
         view=login_required(views.OrganizationDelete.as_view()),
         name="organization_delete"),
+    url(r'^signup_success/$', TemplateView.as_view(template_name='organizations/register_success.html'),  # added
+        name="signup_success"),
 
     # Organization user URLs
     url(r'^(?P<organization_pk>[\d]+)/people/$',
