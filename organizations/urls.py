@@ -27,7 +27,7 @@ from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 
 from organizations import views
-
+from organizations.views import SignUpSuccess
 
 urlpatterns = [
     # Organization URLs
@@ -49,7 +49,8 @@ urlpatterns = [
     url(r'^(?P<organization_pk>[\d]+)/delete/$',
         view=login_required(views.OrganizationDelete.as_view()),
         name="organization_delete"),
-    url(r'^signup_success/$', RedirectView.as_view(url='http://yearend.io/orgarnizations/register_success.html'),
+    url(r'^signup_success/$',
+        view=(SignUpSuccess.as_view()),
         name='signup_success'),
 
     # Organization user URLs

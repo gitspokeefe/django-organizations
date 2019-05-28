@@ -26,7 +26,6 @@
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect
-from django.shortcuts import render
 from django.utils.translation import ugettext as _
 from django.views.generic import CreateView
 from django.views.generic import DeleteView
@@ -163,6 +162,12 @@ class BaseOrganizationUserDelete(OrganizationUserMixin, DeleteView):
     def get_success_url(self):
         return reverse('organization_user_list',
                 kwargs={'organization_pk': self.object.organization.pk})
+
+
+class SignUpSuccess(ListView):
+    template_name = 'organizations/register_success.html'
+
+    model = Organization
 
 
 class OrganizationSignup(FormView):
